@@ -201,19 +201,19 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Mobile menu handling
-    const hamburger = document.getElementById('hamburger');
+    const navToggle = document.getElementById('nav-toggle');
     const navLinks = document.querySelector('.nav-links');
 
-    hamburger.addEventListener('click', () => {
-        const isExpanded = hamburger.getAttribute('aria-expanded') === 'true';
-        hamburger.setAttribute('aria-expanded', !isExpanded);
+    navToggle.addEventListener('click', () => {
+        const isExpanded = navToggle.getAttribute('aria-expanded') === 'true';
+        navToggle.setAttribute('aria-expanded', !isExpanded);
         navLinks.classList.toggle('active');
     });
 
     // Close mobile menu when clicking outside
     document.addEventListener('click', (e) => {
-        if (!hamburger.contains(e.target) && !navLinks.contains(e.target)) {
-            hamburger.setAttribute('aria-expanded', 'false');
+        if (!navToggle.contains(e.target) && !navLinks.contains(e.target)) {
+            navToggle.setAttribute('aria-expanded', 'false');
             navLinks.classList.remove('active');
         }
     });
@@ -254,6 +254,94 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Update copyright year
     document.getElementById('current-year').textContent = new Date().getFullYear();
+
+    // Scroll reveal animations
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+    function setupScrollReveal() {
+        const candidates = [
+            ...document.querySelectorAll('section'),
+            ...document.querySelectorAll('.project'),
+            ...document.querySelectorAll('.highlight-item'),
+            ...document.querySelectorAll('.education-item'),
+            ...document.querySelectorAll('.experience-item'),
+            ...document.querySelectorAll('.skills-container'),
+            ...document.querySelectorAll('.certificates-grid'),
+            ...document.querySelectorAll('.project-content')
+        ];
+
+        const seen = new Set();
+        const targets = candidates.filter(el => {
+            if (seen.has(el)) return false;
+            seen.add(el);
+            return true;
+        });
+
+        targets.forEach((el, idx) => {
+            el.classList.add('reveal');
+            const delay = (idx % 6) * 80; // 0..400ms stagger
+            el.style.setProperty('--reveal-delay', `${delay}ms`);
+        });
+
+        if (prefersReducedMotion.matches) {
+            targets.forEach(el => el.classList.add('in-view'));
+            return;
+        }
+
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('in-view');
+                    revealObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.15, rootMargin: '0px 0px -10% 0px' });
+
+        targets.forEach(el => revealObserver.observe(el));
+    }
+
+    setupScrollReveal();
+
+    // Photos lightbox
+    const lightbox = document.getElementById('lightbox');
+    const lightboxImg = document.getElementById('lightbox-image');
+    const lightboxCaption = document.getElementById('lightbox-caption');
+    const lightboxClose = document.getElementById('lightbox-close');
+
+    function openLightbox(src, caption) {
+        if (!lightbox) return;
+        lightboxImg.src = src;
+        lightboxCaption.textContent = caption || '';
+        lightbox.setAttribute('aria-hidden', 'false');
+        lightboxClose?.focus();
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeLightbox() {
+        if (!lightbox) return;
+        lightbox.setAttribute('aria-hidden', 'true');
+        lightboxImg.src = '';
+        document.body.style.overflow = '';
+    }
+
+    document.querySelectorAll('.gallery-item').forEach(item => {
+        item.addEventListener('click', (e) => {
+            e.preventDefault();
+            const href = item.getAttribute('href');
+            const caption = item.getAttribute('data-caption') || item.querySelector('img')?.alt || '';
+            openLightbox(href, caption);
+        });
+    });
+
+    lightbox?.addEventListener('click', (e) => {
+        if (e.target.hasAttribute('data-close') || e.target === lightboxClose) {
+            closeLightbox();
+        }
+    });
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeLightbox();
+    });
 });
 
 

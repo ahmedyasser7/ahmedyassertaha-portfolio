@@ -48,7 +48,7 @@
                 <a href="#contact" role="menuitem">Contact</a>
             </div>
             <button class="theme-toggle" aria-label="Toggle dark mode">🌙</button>
-            <button class="hamburger" id="hamburger" aria-label="Toggle menu" aria-expanded="false"
+            <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation menu" aria-expanded="false"
                 aria-controls="nav-links">&#9776;</button>
         </nav>
     </header>
@@ -303,9 +303,51 @@
             </div>
         </section>
 
+        <section id="photos">
+            <div class="section-inner">
+                <h2>Gallery</h2>
+                <p class="section-description">Snapshots from work, talks, and life</p>
+                <div class="gallery-grid">
+                    <a href="images\ecpc-2023.jpg" class="gallery-item" data-caption="Building and coding">
+                        <img src="images\ecpc-2023.jpg" alt="Gallery image: building and coding" loading="lazy">
+                    </a>
+                    <a href="images\ecpc-2022.jpg" class="gallery-item" data-caption="Public speaking & teaching">
+                        <img src="images\ecpc-2022.jpg" alt="Gallery image: public speaking and teaching"
+                            loading="lazy">
+                    </a>
+                    <a href="images\ahmed-GDSC2024.jpg" class="gallery-item" data-caption="Problem solving mindset">
+                        <img src="images\ahmed-GDSC2024.jpg" alt="Gallery image: problem solving" loading="lazy">
+                    </a>
+                    <a href="images\ahmed-azcens-2024.jpg" class="gallery-item" data-caption="Sharing knowledge">
+                        <img src="images\ahmed-azcens-2024.jpg" alt="Gallery image: sharing knowledge" loading="lazy">
+                    </a>
+                    
+                </div>
+            </div>
+            <div class="lightbox" id="lightbox" aria-hidden="true" role="dialog" aria-label="Image viewer">
+                <div class="lightbox-backdrop" data-close></div>
+                <figure class="lightbox-content">
+                    <img id="lightbox-image" alt="Expanded view">
+                    <figcaption id="lightbox-caption"></figcaption>
+                    <button class="lightbox-close" id="lightbox-close" aria-label="Close viewer">&times;</button>
+                </figure>
+            </div>
+        </section>
+
         <section id="videos">
             <h2>Videos</h2>
             <p class="section-description">Talks, tutorials, and walkthroughs</p>
+            <div class="videos-grid">
+                <div class="video-embed">
+                    <iframe width="560" height="315" src="https://www.youtube.com/embed/ALlp-XqBsZ8?si=zwq0cMPGMbgnoIja" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                </div>
+                <div class="video-embed">
+                    <iframe width="560" height="315" src="https://www.youtube.com/embed/NJE8mxNE7CI?si=60UGIh8_fLbMCb6Z" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                </div>
+                <div class="video-embed">
+                    <iframe width="560" height="315" src="https://www.youtube.com/embed/kam_rrkw7f4?si=TagrqolgR-5FW4mE" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                </div>
+            </div>
             <div class="project-grid">
                 <article class="project">
                     <div class="project-content">
