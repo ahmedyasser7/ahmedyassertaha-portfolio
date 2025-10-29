@@ -1,6 +1,6 @@
 # Ahmed Yasser Taha's Portfolio
 
-A modern, responsive portfolio website showcasing my work as a Full Stack Developer and Data Scientist.
+A modern, responsive portfolio website showcasing my work as a Back-end Developer and Data Scientist.
 
 ## Features
 
@@ -48,14 +48,6 @@ portfolio/
 └── README.md           # Project documentation
 ```
 
-## Customization
-
-1. Update personal information in `index.html`
-2. Modify styles in `styles.css`
-3. Add your own projects in the projects section
-4. Replace placeholder images with your own
-5. Update meta tags for SEO
-
 ## Performance Optimization
 
 - Lazy loading for images
@@ -72,13 +64,9 @@ portfolio/
 - Edge (latest)
 - Opera (latest)
 
-## License
-
-This project is open source and available under the [MIT License](LICENSE).
-
 ## Contact
 
 For any questions or suggestions, please reach out through:
-- Email: your.email@example.com
-- LinkedIn: [Your LinkedIn Profile]
-- GitHub: [Your GitHub Profile] 
+- Email: ahmedyasser7714@gmail.com
+- LinkedIn: (Ahmed Yasser Taha)[https://www.linkedin.com/in/ahmedyassertaha/]
+- GitHub: (ahmedyasser7)[https://github.com/ahmedyasser7/] 
