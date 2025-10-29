@@ -68,5 +68,5 @@ portfolio/
 
 For any questions or suggestions, please reach out through:
 - Email: ahmedyasser7714@gmail.com
-- LinkedIn: (Ahmed Yasser Taha)[https://www.linkedin.com/in/ahmedyassertaha/]
-- GitHub: (ahmedyasser7)[https://github.com/ahmedyasser7/] 
+- LinkedIn: [Ahmed Yasser Taha](https://www.linkedin.com/in/ahmedyassertaha/)
+- GitHub: [ahmedyasser7](https://github.com/ahmedyasser7/)
