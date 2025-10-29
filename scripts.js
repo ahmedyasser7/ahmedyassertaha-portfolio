@@ -166,24 +166,28 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Back-to-top button with improved visibility
+    // Back-to-top button with improved visibility and smooth animation
     const backToTopButton = document.getElementById('back-to-top');
     let isScrolling;
+
+    function toggleBackToTop() {
+        if (window.scrollY > 300) {
+            backToTopButton.style.opacity = '1';
+            backToTopButton.style.visibility = 'visible';
+            backToTopButton.style.transform = 'translateY(0)';
+        } else {
+            backToTopButton.style.opacity = '0';
+            backToTopButton.style.visibility = 'hidden';
+            backToTopButton.style.transform = 'translateY(20px)';
+        }
+    }
 
     window.addEventListener('scroll', () => {
         // Clear our timeout throughout the scroll
         window.clearTimeout(isScrolling);
 
         // Set a timeout to run after scrolling ends
-        isScrolling = setTimeout(() => {
-            if (window.scrollY > 300) {
-                backToTopButton.style.opacity = '1';
-                backToTopButton.style.visibility = 'visible';
-            } else {
-                backToTopButton.style.opacity = '0';
-                backToTopButton.style.visibility = 'hidden';
-            }
-        }, 100);
+        isScrolling = setTimeout(toggleBackToTop, 100);
     });
 
     backToTopButton.addEventListener('click', () => {
@@ -191,6 +195,9 @@ document.addEventListener('DOMContentLoaded', () => {
             top: 0,
             behavior: 'smooth'
         });
+        
+        // Update focus for accessibility
+        document.getElementById('main-content').focus({ preventScroll: true });
     });
 
     // Mobile menu handling
