@@ -23,7 +23,7 @@ A modern, responsive portfolio website showcasing my work as a Full Stack Develo
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/portfolio.git
+git clone https://github.com/ahmedyasser7/ahmedyassertaha-portfolio.git
 ```
 
 2. Open `index.html` in your browser or use a local server:
