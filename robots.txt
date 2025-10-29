@@ -1,6 +1,6 @@
 User-agent: *
 Allow: /
-Sitemap: https://your-domain.com/sitemap.xml
+Sitemap: https://ahmedyasser7.github.io/ahmedyassertaha-portfolio/sitemap.xml
 
 # Disallow crawling of any private or admin areas if added in future
 Disallow: /admin/
