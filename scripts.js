@@ -426,6 +426,108 @@ document.addEventListener('DOMContentLoaded', () => {
             if (certRafId) cancelAnimationFrame(certRafId);
         });
     }
+
+    // Stars background animation
+    const starsCanvas = document.getElementById('stars-canvas');
+    if (starsCanvas) {
+        const ctx = starsCanvas.getContext('2d');
+        const dpr = Math.max(1, window.devicePixelRatio || 1);
+        let width = 0;
+        let height = 0;
+        let stars = [];
+        const STAR_COUNT = 140; // reasonable default
+        let rafId;
+        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+        function resizeCanvas() {
+            width = window.innerWidth;
+            height = window.innerHeight;
+            starsCanvas.width = Math.floor(width * dpr);
+            starsCanvas.height = Math.floor(height * dpr);
+            starsCanvas.style.width = width + 'px';
+            starsCanvas.style.height = height + 'px';
+            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        }
+
+        function getStarColor() {
+            return document.body.classList.contains('dark-theme') ? 'rgba(255,255,255,0.9)' : 'rgba(106,13,173,0.8)';
+        }
+
+        function seedStars() {
+            stars = Array.from({ length: STAR_COUNT }, () => ({
+                x: Math.random() * width,
+                y: Math.random() * height,
+                r: Math.random() * 1.5 + 0.3,
+                vy: Math.random() * 0.12 + 0.03, // slow drift
+                tw: Math.random() * 0.5 + 0.5 // twinkle base
+            }));
+        }
+
+        function drawFrame() {
+            ctx.clearRect(0, 0, width, height);
+            const color = getStarColor();
+            for (const s of stars) {
+                // twinkle
+                const alpha = 0.6 + Math.sin((performance.now() * 0.002 + s.x + s.y)) * 0.4 * s.tw;
+                ctx.fillStyle = color.replace(/\d?\.\d+\)$/,'') + (alpha.toFixed(2) + ')');
+                ctx.beginPath();
+                ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+                ctx.fill();
+
+                // drift downward
+                s.y += s.vy;
+                if (s.y > height + 2) {
+                    s.y = -2;
+                    s.x = Math.random() * width;
+                }
+            }
+        }
+
+        function tick() {
+            drawFrame();
+            rafId = requestAnimationFrame(tick);
+        }
+
+        // Init
+        resizeCanvas();
+        seedStars();
+
+        const start = () => {
+            if (!prefersReducedMotion.matches && !rafId) rafId = requestAnimationFrame(tick);
+            if (prefersReducedMotion.matches) drawFrame(); // static on reduced motion
+        };
+        const stop = () => {
+            if (rafId) cancelAnimationFrame(rafId);
+            rafId = undefined;
+        };
+
+        // Start/Stop based on visibility and reduced motion
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) stop(); else start();
+        });
+        prefersReducedMotion.addEventListener('change', () => {
+            stop();
+            start();
+        });
+
+        // React to theme changes by redrawing next frames (handled per frame color)
+
+        // Handle resize
+        let resizeTimeout;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(() => {
+                resizeCanvas();
+                seedStars();
+            }, 150);
+        });
+
+        // Cleanup
+        window.addEventListener('beforeunload', stop);
+
+        // Kickoff
+        start();
+    }
             const maxScroll = galleryGrid.scrollWidth - galleryGrid.clientWidth;
             
             // Only auto-scroll if there's content to scroll

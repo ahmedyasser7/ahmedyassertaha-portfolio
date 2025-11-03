@@ -75,6 +75,16 @@ body {
     overflow-x: hidden;
 }
 
+/* Stars canvas background */
+#stars-canvas {
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 0;
+    pointer-events: none;
+}
+
 /* Focus Styles for Accessibility */
 :focus {
     outline: 3px solid var(--primary-color);
