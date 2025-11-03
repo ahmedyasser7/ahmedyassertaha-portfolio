@@ -381,6 +381,51 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
+    // Auto-scroll certificates
+    const certificatesGrid = document.querySelector('.certificates-grid');
+    if (certificatesGrid) {
+        let certScroll = 0;
+        const certSpeed = 0.5;
+        let certDir = 1;
+        let certAnimating = false;
+        let certUserInteracting = false;
+        let certRafId;
+
+        function certTick() {
+            if (!certificatesGrid) return;
+            const max = certificatesGrid.scrollWidth - certificatesGrid.clientWidth;
+            if (certUserInteracting || max <= 0) {
+                certRafId = requestAnimationFrame(certTick);
+                return;
+            }
+            if (certScroll >= max) certDir = -1;
+            else if (certScroll <= 0) certDir = 1;
+            certScroll += certSpeed * certDir;
+            certificatesGrid.scrollLeft = certScroll;
+            certRafId = requestAnimationFrame(certTick);
+        }
+
+        // Sync internal scroll position with user actions
+        let certScrollTimeout;
+        certificatesGrid.addEventListener('scroll', () => {
+            certUserInteracting = true;
+            clearTimeout(certScrollTimeout);
+            certScroll = certificatesGrid.scrollLeft;
+            certScrollTimeout = setTimeout(() => { certUserInteracting = false; }, 1500);
+        });
+
+        certificatesGrid.addEventListener('mouseenter', () => { certUserInteracting = true; });
+        certificatesGrid.addEventListener('mouseleave', () => { certUserInteracting = false; });
+
+        if (!certAnimating) {
+            certAnimating = true;
+            setTimeout(() => { certTick(); }, 800);
+        }
+
+        window.addEventListener('beforeunload', () => {
+            if (certRafId) cancelAnimationFrame(certRafId);
+        });
+    }
             const maxScroll = galleryGrid.scrollWidth - galleryGrid.clientWidth;
             
             // Only auto-scroll if there's content to scroll
