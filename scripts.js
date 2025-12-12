@@ -137,9 +137,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Simulate form submission (replace with actual API call)
                 await new Promise(resolve => setTimeout(resolve, 1500));
                 
-                // Show success message
+                // Show success message inline
                 form.reset();
-                alert('Message sent successfully!');
+                const successEl = document.getElementById('contact-success');
+                if (successEl) {
+                    successEl.hidden = false;
+                    successEl.classList.add('in-view');
+                    successEl.focus && successEl.focus();
+                    // hide after 6s
+                    setTimeout(() => { successEl.hidden = true; }, 6000);
+                } else {
+                    alert('Message sent successfully!');
+                }
             } catch (error) {
                 alert('Failed to send message. Please try again later.');
             } finally {
