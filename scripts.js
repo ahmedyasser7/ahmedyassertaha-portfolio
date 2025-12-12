@@ -344,16 +344,49 @@ document.addEventListener('DOMContentLoaded', () => {
         lightbox.setAttribute('aria-hidden', 'true');
         if (lightboxImg) lightboxImg.src = '';
         document.body.style.overflow = '';
+        // reset current gallery index when closing
+        try { currentGalleryIndex = -1; if (typeof updateNavState === 'function') updateNavState(); } catch (e) { /* ignore if not defined yet */ }
     }
 
-    document.querySelectorAll('.gallery-item').forEach(item => {
+    const galleryItems = Array.from(document.querySelectorAll('.gallery-item'));
+    let currentGalleryIndex = -1;
+
+    function showLightboxAt(index) {
+        const item = galleryItems[index];
+        if (!item) return;
+        const href = item.getAttribute('href');
+        const caption = item.getAttribute('data-caption') || item.querySelector('img')?.alt || '';
+        openLightbox(href, caption);
+        currentGalleryIndex = index;
+        updateNavState();
+    }
+
+    galleryItems.forEach((item, idx) => {
         item.addEventListener('click', (e) => {
             e.preventDefault();
-            const href = item.getAttribute('href');
-            const caption = item.getAttribute('data-caption') || item.querySelector('img')?.alt || '';
-            openLightbox(href, caption);
+            showLightboxAt(idx);
         });
     });
+
+    const lbPrev = document.getElementById('lightbox-prev');
+    const lbNext = document.getElementById('lightbox-next');
+
+    function updateNavState() {
+        if (!lightbox) return;
+        if (lbPrev) lbPrev.disabled = currentGalleryIndex <= 0;
+        if (lbNext) lbNext.disabled = currentGalleryIndex >= galleryItems.length - 1;
+    }
+
+    function showPrev() {
+        if (currentGalleryIndex > 0) showLightboxAt(currentGalleryIndex - 1);
+    }
+
+    function showNext() {
+        if (currentGalleryIndex < galleryItems.length - 1) showLightboxAt(currentGalleryIndex + 1);
+    }
+
+    if (lbPrev) lbPrev.addEventListener('click', (e) => { e.stopPropagation(); showPrev(); });
+    if (lbNext) lbNext.addEventListener('click', (e) => { e.stopPropagation(); showNext(); });
 
     lightbox?.addEventListener('click', (e) => {
         if (e.target.hasAttribute('data-close') || e.target === lightboxClose) {
@@ -363,6 +396,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') closeLightbox();
+        if (e.key === 'ArrowLeft') showPrev();
+        if (e.key === 'ArrowRight') showNext();
     });
 
     // Animated counters for sessions

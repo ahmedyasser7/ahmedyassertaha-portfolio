@@ -60,7 +60,7 @@
             <div class="hero-content">
                 <div class="hero-profile">
                     <div class="profile-photo">
-                        <img src="images/ahmedyasser1.jpg" alt="Ahmed Yasser Taha" loading="lazy">
+                        <img src="images/AhmedYasser-Grad-3x4_square.jpg" alt="Ahmed Yasser Taha" loading="lazy">
                     </div>
                     <div class="profile-content">
                         <p class="greeting animate">Hello, I'm</p>
@@ -398,16 +398,25 @@
                 <div class="gallery-grid">
                     <a href="images/ecpc-2023.jpg" class="gallery-item" data-caption="Building and coding">
                         <img src="images/ecpc-2023.jpg" alt="Gallery image: building and coding" loading="lazy">
+                        <div class="gallery-overlay"><span class="gallery-caption">Building and coding</span></div>
                     </a>
-                    <a href="images/ecpc-2022.jpg" class="gallery-item" data-caption="Public speaking & teaching">
-                        <img src="images/ecpc-2022.jpg" alt="Gallery image: public speaking and teaching"
+                    <a href="images/ecpc-2022.jpg" class="gallery-item" data-caption="Problem solving mindset">
+                        <img src="images/ecpc-2022.jpg" alt="Gallery image: Problem solving mindset"
                             loading="lazy">
+                        <div class="gallery-overlay"><span class="gallery-caption">Problem solving mindset</span>
+                        </div>
                     </a>
-                    <a href="images/ahmed-GDSC2024.jpg" class="gallery-item" data-caption="Problem solving mindset">
-                        <img src="images/ahmed-GDSC2024.jpg" alt="Gallery image: problem solving" loading="lazy">
+                    <a href="images/ahmed-GDSC2024.jpg" class="gallery-item" data-caption="Public speaking & teaching">
+                        <img src="images/ahmed-GDSC2024.jpg" alt="Gallery image: Public speaking & teaching" loading="lazy">
+                        <div class="gallery-overlay"><span class="gallery-caption">Public speaking & teaching</span></div>
                     </a>
                     <a href="images/ahmed-azcens-2024.jpg" class="gallery-item" data-caption="Sharing knowledge">
                         <img src="images/ahmed-azcens-2024.jpg" alt="Gallery image: sharing knowledge" loading="lazy">
+                        <div class="gallery-overlay"><span class="gallery-caption">Sharing knowledge</span></div>
+                    </a>
+                    <a href="images/ahmed-gradute-2025.jpg" class="gallery-item" data-caption="Gradutation day">
+                        <img src="images/ahmed-gradute-2025.jpg" alt="Gallery image: Graduation day" loading="lazy">
+                        <div class="gallery-overlay"><span class="gallery-caption">Graduation day</span></div>
                     </a>
 
                 </div>
@@ -415,8 +424,14 @@
             <div class="lightbox" id="lightbox" aria-hidden="true" role="dialog" aria-label="Image viewer">
                 <div class="lightbox-backdrop" data-close></div>
                 <figure class="lightbox-content">
+                    <button class="lightbox-nav lightbox-prev" id="lightbox-prev" aria-label="Previous image">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
                     <img id="lightbox-image" alt="Expanded view">
                     <figcaption id="lightbox-caption"></figcaption>
+                    <button class="lightbox-nav lightbox-next" id="lightbox-next" aria-label="Next image">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
                     <button class="lightbox-close" id="lightbox-close" aria-label="Close viewer">&times;</button>
                 </figure>
             </div>
