@@ -391,6 +391,62 @@ document.addEventListener('DOMContentLoaded', () => {
         counters.forEach(c => counterObserver.observe(c));
     }
 
+    // Certificate Carousel
+    const certGrid = document.querySelector('.certificates-grid');
+    const certPrevBtn = document.getElementById('cert-prev');
+    const certNextBtn = document.getElementById('cert-next');
+    const indicators = document.querySelectorAll('.carousel-indicators .indicator');
+    
+    if (certGrid && certPrevBtn && certNextBtn) {
+        let currentIndex = 0;
+        const totalCerts = document.querySelectorAll('.certificate-item').length;
+        const itemsPerView = 3;
+        const maxIndex = Math.max(0, totalCerts - itemsPerView);
+        
+        function updateCarousel() {
+            // Calculate gap for proper spacing
+            const gapSize = 2; // 2rem = approximately 32px
+            const itemWidth = 100 / itemsPerView;
+            const totalGaps = (itemsPerView - 1) * gapSize;
+            const offset = currentIndex * (itemWidth + (totalGaps / itemsPerView));
+            
+            certGrid.style.transform = `translateX(-${currentIndex * (itemWidth + 1)}%)`;
+            
+            // Update indicators
+            indicators.forEach((ind, idx) => {
+                ind.classList.toggle('active', idx === currentIndex);
+            });
+            
+            // Update button disabled states
+            certPrevBtn.disabled = currentIndex === 0;
+            certNextBtn.disabled = currentIndex === maxIndex;
+        }
+        
+        certPrevBtn.addEventListener('click', () => {
+            if (currentIndex > 0) {
+                currentIndex--;
+                updateCarousel();
+            }
+        });
+        
+        certNextBtn.addEventListener('click', () => {
+            if (currentIndex < maxIndex) {
+                currentIndex++;
+                updateCarousel();
+            }
+        });
+        
+        indicators.forEach((indicator) => {
+            indicator.addEventListener('click', () => {
+                currentIndex = Math.min(parseInt(indicator.getAttribute('data-index')), maxIndex);
+                updateCarousel();
+            });
+        });
+        
+        // Initialize
+        updateCarousel();
+    }
+
     // Auto-scroll gallery
     const galleryGrid = document.querySelector('.gallery-grid');
     if (galleryGrid) {
