@@ -2,6 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Theme Management
     const themeToggle = document.querySelector('.theme-toggle');
     const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
     const currentTheme = localStorage.getItem('theme') ||
         (prefersDarkScheme.matches ? 'dark' : 'light');
 
@@ -13,6 +14,8 @@ document.addEventListener('DOMContentLoaded', () => {
             if (icon) {
                 icon.className = theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
             }
+            themeToggle.setAttribute('aria-label', theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
+            themeToggle.setAttribute('aria-pressed', String(theme === 'dark'));
         }
         localStorage.setItem('theme', theme);
     }
@@ -82,118 +85,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
 
-    // Form Validation and Handling
-    const form = document.getElementById('contact-form');
-    if (form) {
-        const formInputs = form.querySelectorAll('input, textarea');
-
-        function validateEmail(email) {
-            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            return re.test(email.toLowerCase());
-        }
-
-        function showError(input, message) {
-            const formGroup = input.closest('.input-group');
-            if (!formGroup) return;
-            const errorDiv = formGroup.querySelector('.error-message') ||
-                document.createElement('div');
-            
-            errorDiv.className = 'error-message';
-            errorDiv.textContent = message;
-            
-            if (!formGroup.querySelector('.error-message')) {
-                formGroup.appendChild(errorDiv);
-            }
-            
-            input.classList.add('error');
-        }
-
-        function clearError(input) {
-            const formGroup = input.closest('.input-group');
-            if (!formGroup) return;
-            const errorDiv = formGroup.querySelector('.error-message');
-            
-            if (errorDiv) {
-                errorDiv.remove();
-            }
-            
-            input.classList.remove('error');
-        }
-
-        function validateInput(input) {
-            clearError(input);
-            
-            if (!input.value.trim()) {
-                showError(input, 'This field is required');
-                return false;
-            }
-
-            if (input.type === 'email' && !validateEmail(input.value)) {
-                showError(input, 'Please enter a valid email address');
-                return false;
-            }
-
-            if (input.id === 'message' && input.value.length < 10) {
-                showError(input, 'Message must be at least 10 characters long');
-                return false;
-            }
-
-            return true;
-        }
-
-        // Real-time validation
-        formInputs.forEach(input => {
-            input.addEventListener('blur', () => validateInput(input));
-            input.addEventListener('input', () => {
-                if (input.classList.contains('error')) {
-                    validateInput(input);
-                }
-            });
-        });
-
-        // Form submission
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            // Validate all inputs
-            const isValid = Array.from(formInputs).every(validateInput);
-            if (!isValid) return;
-
-            // Add loading state
-            const submitButton = form.querySelector('button[type="submit"]');
-            if (!submitButton) return;
-            const originalText = submitButton.textContent;
-            submitButton.classList.add('loading');
-            submitButton.textContent = 'Sending...';
-            submitButton.disabled = true;
-
-            try {
-                // Simulate form submission (replace with actual API call)
-                await new Promise(resolve => setTimeout(resolve, 1500));
-                
-                // Show success message inline
-                form.reset();
-                const successEl = document.getElementById('contact-success');
-                if (successEl) {
-                    successEl.hidden = false;
-                    successEl.classList.add('in-view');
-                    successEl.focus && successEl.focus();
-                    // hide after 6s
-                    setTimeout(() => { successEl.hidden = true; }, 6000);
-                } else {
-                    alert('Message sent successfully!');
-                }
-            } catch (error) {
-                alert('Failed to send message. Please try again later.');
-            } finally {
-                // Remove loading state
-                submitButton.classList.remove('loading');
-                submitButton.textContent = originalText;
-                submitButton.disabled = false;
-            }
-        });
-    }
-
     // Smooth scrolling with improved accessibility
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function (e) {
@@ -207,7 +98,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 // Smooth scroll to target
                 targetElement.scrollIntoView({
-                    behavior: 'smooth',
+                    behavior: prefersReducedMotion.matches ? 'auto' : 'smooth',
                     block: 'start'
                 });
 
@@ -220,34 +111,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Back-to-top button with improved visibility and smooth animation
     const backToTopButton = document.getElementById('back-to-top');
-    let isScrolling;
-
     if (backToTopButton) {
         function toggleBackToTop() {
-            if (!backToTopButton) return;
-            if (window.scrollY > 300) {
-                backToTopButton.style.opacity = '1';
-                backToTopButton.style.visibility = 'visible';
-                backToTopButton.style.transform = 'translateY(0)';
-            } else {
-                backToTopButton.style.opacity = '0';
-                backToTopButton.style.visibility = 'hidden';
-                backToTopButton.style.transform = 'translateY(20px)';
-            }
+            backToTopButton.classList.toggle('is-visible', window.scrollY > 300);
         }
 
-        window.addEventListener('scroll', () => {
-            // Clear our timeout throughout the scroll
-            window.clearTimeout(isScrolling);
-
-            // Set a timeout to run after scrolling ends
-            isScrolling = setTimeout(toggleBackToTop, 100);
-        });
+        window.addEventListener('scroll', toggleBackToTop, { passive: true });
+        toggleBackToTop();
 
         backToTopButton.addEventListener('click', () => {
             window.scrollTo({
                 top: 0,
-                behavior: 'smooth'
+                behavior: prefersReducedMotion.matches ? 'auto' : 'smooth'
             });
             
             // Update focus for accessibility
@@ -261,56 +136,59 @@ document.addEventListener('DOMContentLoaded', () => {
     // Mobile menu handling
     const navToggle = document.getElementById('nav-toggle');
     const navLinks = document.querySelector('.nav-links');
+    const navAnchors = Array.from(document.querySelectorAll('.nav-links a[href^="#"]'));
+
+    function closeMobileMenu() {
+        if (!navToggle || !navLinks) return;
+        navToggle.setAttribute('aria-expanded', 'false');
+        navLinks.classList.remove('active');
+    }
 
     if (navToggle && navLinks) {
         navToggle.addEventListener('click', () => {
             const isExpanded = navToggle.getAttribute('aria-expanded') === 'true';
-            navToggle.setAttribute('aria-expanded', !isExpanded);
+            navToggle.setAttribute('aria-expanded', String(!isExpanded));
             navLinks.classList.toggle('active');
         });
+
+        navAnchors.forEach(link => link.addEventListener('click', closeMobileMenu));
 
         // Close mobile menu when clicking outside
         document.addEventListener('click', (e) => {
             if (!navToggle.contains(e.target) && !navLinks.contains(e.target)) {
-                navToggle.setAttribute('aria-expanded', 'false');
-                navLinks.classList.remove('active');
+                closeMobileMenu();
             }
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeMobileMenu();
         });
     }
 
-    // Typewriter effect with improved performance
-    const typewriterText = "Web Developer and Data Scientist";
-    const typewriterElement = document.getElementById('typewriter');
-    let typewriterIndex = 0;
-    let typewriterTimeout;
+    const observedSections = navAnchors
+        .map(link => document.querySelector(link.getAttribute('href')))
+        .filter(Boolean);
 
-    function typeWriter() {
-        if (!typewriterElement) return;
-        if (typewriterIndex < typewriterText.length) {
-            typewriterElement.textContent += typewriterText.charAt(typewriterIndex);
-            typewriterIndex++;
-            typewriterTimeout = setTimeout(typeWriter, 100);
+    if (observedSections.length) {
+        const navObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (!entry.isIntersecting) return;
+                const activeLink = navAnchors.find(link => link.getAttribute('href') === `#${entry.target.id}`);
+                navAnchors.forEach(link => link.removeAttribute('aria-current'));
+                if (activeLink) activeLink.setAttribute('aria-current', 'page');
+            });
+        }, { rootMargin: '-35% 0px -55% 0px', threshold: 0.01 });
+
+        observedSections.forEach(section => navObserver.observe(section));
+    }
+
+    if (location.hash) {
+        const activeLink = navAnchors.find(link => link.getAttribute('href') === location.hash);
+        if (activeLink) {
+            navAnchors.forEach(link => link.removeAttribute('aria-current'));
+            activeLink.setAttribute('aria-current', 'page');
         }
     }
-
-    if (typewriterElement) {
-        // Start typewriter effect when element is visible
-        const typewriterObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    typeWriter();
-                    typewriterObserver.unobserve(entry.target);
-                }
-            });
-        }, { threshold: 0.5 });
-
-        typewriterObserver.observe(typewriterElement);
-    }
-
-    // Cleanup on page unload
-    window.addEventListener('beforeunload', () => {
-        clearTimeout(typewriterTimeout);
-    });
 
     // Update copyright year
     const currentYearElement = document.getElementById('current-year');
@@ -319,8 +197,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Scroll reveal animations
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-
     function setupScrollReveal() {
         const candidates = [
             ...document.querySelectorAll('section'),
@@ -372,10 +248,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const lightboxImg = document.getElementById('lightbox-image');
     const lightboxCaption = document.getElementById('lightbox-caption');
     const lightboxClose = document.getElementById('lightbox-close');
+    let lastLightboxTrigger = null;
 
     function openLightbox(src, caption) {
         if (!lightbox || !lightboxImg || !lightboxCaption) return;
         lightboxImg.src = src;
+        lightboxImg.alt = caption ? `Expanded view: ${caption}` : 'Expanded gallery image';
         lightboxCaption.textContent = caption || '';
         lightbox.setAttribute('aria-hidden', 'false');
         if (lightboxClose) lightboxClose.focus();
@@ -387,8 +265,9 @@ document.addEventListener('DOMContentLoaded', () => {
         lightbox.setAttribute('aria-hidden', 'true');
         if (lightboxImg) lightboxImg.src = '';
         document.body.style.overflow = '';
-        // reset current gallery index when closing
-        try { currentGalleryIndex = -1; if (typeof updateNavState === 'function') updateNavState(); } catch (e) { /* ignore if not defined yet */ }
+        if (lastLightboxTrigger) lastLightboxTrigger.focus({ preventScroll: true });
+        currentGalleryIndex = -1;
+        updateNavState();
     }
 
     const galleryItems = Array.from(document.querySelectorAll('.gallery-item'));
@@ -399,6 +278,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!item) return;
         const href = item.getAttribute('href');
         const caption = item.getAttribute('data-caption') || item.querySelector('img')?.alt || '';
+        lastLightboxTrigger = item;
         openLightbox(href, caption);
         currentGalleryIndex = index;
         updateNavState();
@@ -438,6 +318,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     document.addEventListener('keydown', (e) => {
+        if (!lightbox || lightbox.getAttribute('aria-hidden') !== 'false') return;
         if (e.key === 'Escape') closeLightbox();
         if (e.key === 'ArrowLeft') showPrev();
         if (e.key === 'ArrowRight') showNext();
@@ -467,62 +348,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }, { threshold: 0.4 });
 
         counters.forEach(c => counterObserver.observe(c));
-    }
-
-    // Certificate Carousel
-    const certGrid = document.querySelector('.certificates-grid');
-    const certPrevBtn = document.getElementById('cert-prev');
-    const certNextBtn = document.getElementById('cert-next');
-    const indicators = document.querySelectorAll('.carousel-indicators .indicator');
-    
-    if (certGrid && certPrevBtn && certNextBtn) {
-        let currentIndex = 0;
-        const totalCerts = document.querySelectorAll('.certificate-item').length;
-        const itemsPerView = 3;
-        const maxIndex = Math.max(0, totalCerts - itemsPerView);
-        
-        function updateCarousel() {
-            // Calculate gap for proper spacing
-            const gapSize = 2; // 2rem = approximately 32px
-            const itemWidth = 100 / itemsPerView;
-            const totalGaps = (itemsPerView - 1) * gapSize;
-            const offset = currentIndex * (itemWidth + (totalGaps / itemsPerView));
-            
-            certGrid.style.transform = `translateX(-${currentIndex * (itemWidth + 1)}%)`;
-            
-            // Update indicators
-            indicators.forEach((ind, idx) => {
-                ind.classList.toggle('active', idx === currentIndex);
-            });
-            
-            // Update button disabled states
-            certPrevBtn.disabled = currentIndex === 0;
-            certNextBtn.disabled = currentIndex === maxIndex;
-        }
-        
-        certPrevBtn.addEventListener('click', () => {
-            if (currentIndex > 0) {
-                currentIndex--;
-                updateCarousel();
-            }
-        });
-        
-        certNextBtn.addEventListener('click', () => {
-            if (currentIndex < maxIndex) {
-                currentIndex++;
-                updateCarousel();
-            }
-        });
-        
-        indicators.forEach((indicator) => {
-            indicator.addEventListener('click', () => {
-                currentIndex = Math.min(parseInt(indicator.getAttribute('data-index')), maxIndex);
-                updateCarousel();
-            });
-        });
-        
-        // Initialize
-        updateCarousel();
     }
 
     // Stars background animation
@@ -623,127 +448,105 @@ document.addEventListener('DOMContentLoaded', () => {
         // Cleanup
         window.addEventListener('beforeunload', stop);
 
-        // Kickoff
-        start();
+        // Let the first paint finish before starting the decorative canvas.
+        if ('requestIdleCallback' in window) {
+            window.requestIdleCallback(start, { timeout: 1500 });
+        } else {
+            setTimeout(start, 600);
+        }
     }
 
-    // Auto-scroll gallery
-    const galleryGrid = document.querySelector('.gallery-grid');
-    if (galleryGrid) {
+    function setupAutoScroll(scroller, options = {}) {
+        if (!scroller) return;
+        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
         let scrollAmount = 0;
-        const scrollSpeed = 10; // pixels per frame (smoother)
-        let scrollDirection = 1; // 1 for right, -1 for left
+        const scrollSpeed = options.speed || 0.5;
+        let scrollDirection = 1;
         let isScrolling = true;
-        let animationFrameId;
         let userInteracting = false;
+        let animationFrameId;
+        let scrollTimeout;
+
+        function canScroll() {
+            return scroller.scrollWidth > scroller.clientWidth + 1;
+        }
 
         function autoScroll() {
-            if (!isScrolling || !galleryGrid || userInteracting) {
-                if (animationFrameId) {
-                    animationFrameId = requestAnimationFrame(autoScroll);
-                }
+            if (prefersReducedMotion.matches) return;
+
+            const maxScroll = scroller.scrollWidth - scroller.clientWidth;
+            if (maxScroll <= 0) {
+                animationFrameId = undefined;
                 return;
             }
 
-            // Auto-scroll certificates
-            const certificatesGrid = document.querySelector('.certificates-grid');
-            if (certificatesGrid) {
-                let certScroll = 0;
-                const certSpeed = 0.5;
-                let certDir = 1;
-                let certAnimating = false;
-                let certUserInteracting = false;
-                let certRafId;
-
-                function certTick() {
-                    if (!certificatesGrid) return;
-                    const max = certificatesGrid.scrollWidth - certificatesGrid.clientWidth;
-                    if (certUserInteracting || max <= 0) {
-                        certRafId = requestAnimationFrame(certTick);
-                        return;
-                    }
-                    if (certScroll >= max) certDir = -1;
-                    else if (certScroll <= 0) certDir = 1;
-                    certScroll += certSpeed * certDir;
-                    certificatesGrid.scrollLeft = certScroll;
-                    certRafId = requestAnimationFrame(certTick);
-                }
-
-                // Sync internal scroll position with user actions
-                let certScrollTimeout;
-                certificatesGrid.addEventListener('scroll', () => {
-                    certUserInteracting = true;
-                    clearTimeout(certScrollTimeout);
-                    certScroll = certificatesGrid.scrollLeft;
-                    certScrollTimeout = setTimeout(() => { certUserInteracting = false; }, 1500);
-                });
-
-                certificatesGrid.addEventListener('mouseenter', () => { certUserInteracting = true; });
-                certificatesGrid.addEventListener('mouseleave', () => { certUserInteracting = false; });
-
-                if (!certAnimating) {
-                    certAnimating = true;
-                    setTimeout(() => { certTick(); }, 800);
-                }
-
-                window.addEventListener('beforeunload', () => {
-                    if (certRafId) cancelAnimationFrame(certRafId);
-                });
+            if (!isScrolling || userInteracting) {
+                animationFrameId = requestAnimationFrame(autoScroll);
+                return;
             }
 
-
-
-            const maxScroll = galleryGrid.scrollWidth - galleryGrid.clientWidth;
-            
-            // Only auto-scroll if there's content to scroll
-            if (maxScroll > 0) {
-                // If we've scrolled to the end, reverse direction
-                if (scrollAmount >= maxScroll) {
-                    scrollDirection = -1;
-                } else if (scrollAmount <= 0) {
-                    scrollDirection = 1;
-                }
-
-                scrollAmount += scrollSpeed * scrollDirection;
-                galleryGrid.scrollLeft = scrollAmount;
+            if (scrollAmount >= maxScroll) {
+                scrollDirection = -1;
+            } else if (scrollAmount <= 0) {
+                scrollDirection = 1;
             }
-            
+
+            scrollAmount += scrollSpeed * scrollDirection;
+            scroller.scrollLeft = scrollAmount;
+
             animationFrameId = requestAnimationFrame(autoScroll);
         }
 
-        // Pause on hover and user interaction
-        galleryGrid.addEventListener('mouseenter', () => {
+        function start() {
+            if (!prefersReducedMotion.matches && !animationFrameId && canScroll()) {
+                animationFrameId = requestAnimationFrame(autoScroll);
+            }
+        }
+
+        scroller.addEventListener('mouseenter', () => {
             isScrolling = false;
         });
 
-        galleryGrid.addEventListener('mouseleave', () => {
+        scroller.addEventListener('mouseleave', () => {
             isScrolling = true;
         });
 
-        // Detect manual scrolling
-        let scrollTimeout;
-        galleryGrid.addEventListener('scroll', () => {
+        scroller.addEventListener('scroll', () => {
             userInteracting = true;
             clearTimeout(scrollTimeout);
-            scrollAmount = galleryGrid.scrollLeft;
-            
-            // Resume auto-scroll after user stops interacting
+            scrollAmount = scroller.scrollLeft;
+
             scrollTimeout = setTimeout(() => {
                 userInteracting = false;
-            }, 2000); // 2 seconds of inactivity
+            }, options.resumeDelay || 1500);
         });
 
-        // Start auto-scrolling after a short delay
+        const stop = () => {
+            if (animationFrameId) cancelAnimationFrame(animationFrameId);
+            animationFrameId = undefined;
+        };
+
+        prefersReducedMotion.addEventListener('change', () => {
+            stop();
+            start();
+        });
+
         setTimeout(() => {
-            autoScroll();
-        }, 1000);
+            start();
+        }, options.delay || 800);
 
-        // Cleanup on page unload
-        window.addEventListener('beforeunload', () => {
-            if (animationFrameId) {
-                cancelAnimationFrame(animationFrameId);
-            }
-        });
+        if ('ResizeObserver' in window) {
+            const resizeObserver = new ResizeObserver(start);
+            resizeObserver.observe(scroller);
+            window.addEventListener('beforeunload', () => resizeObserver.disconnect());
+        } else {
+            window.addEventListener('resize', start, { passive: true });
+        }
+
+        window.addEventListener('beforeunload', stop);
     }
+
+    setupAutoScroll(document.querySelector('.certificates-grid'), { speed: 0.5, delay: 800 });
+    setupAutoScroll(document.querySelector('.gallery-grid'), { speed: 1, delay: 1000, resumeDelay: 2000 });
 }
 );

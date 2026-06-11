@@ -17,6 +17,8 @@
 
     /* Derived Colors */
     --text-color: var(--text-dark);
+    --text-primary: var(--text-dark);
+    --text-secondary: #4B5563;
     --background-color: var(--neutral-base);
     --error-color: #e74c3c;
     --success-color: #2ecc71;
@@ -66,6 +68,8 @@
     /* Darker Soft Purple */
 
     --text-color: var(--text-dark);
+    --text-primary: var(--text-dark);
+    --text-secondary: #CBD5E1;
     --background-color: var(--neutral-base);
     --box-shadow: 0 2px 5px rgba(255, 255, 255, 0.1);
 
@@ -210,8 +214,13 @@ nav {
 }
 
 .nav-links a:hover::after,
-.nav-links a:focus::after {
+.nav-links a:focus::after,
+.nav-links a[aria-current="page"]::after {
     width: 100%;
+}
+
+.nav-links a[aria-current="page"] {
+    color: var(--primary-color);
 }
 
 /* Social Links */
@@ -420,10 +429,19 @@ section:nth-of-type(even) {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: url(images/backg.jpg) no-repeat center center/cover;
-    background-attachment: fixed;
+    background:
+        linear-gradient(135deg, rgba(255, 255, 255, 0.96), rgba(239, 246, 255, 0.92)),
+        radial-gradient(circle at 76% 24%, rgba(106, 13, 173, 0.2), transparent 36%),
+        radial-gradient(circle at 22% 78%, rgba(63, 142, 252, 0.18), transparent 34%);
     padding: 8rem 5% 4rem 5%;
     overflow: hidden;
+}
+
+.dark-theme .hero {
+    background:
+        linear-gradient(135deg, rgba(15, 23, 42, 0.97), rgba(30, 41, 59, 0.94)),
+        radial-gradient(circle at 76% 24%, rgba(139, 92, 246, 0.24), transparent 36%),
+        radial-gradient(circle at 22% 78%, rgba(96, 165, 250, 0.16), transparent 34%);
 }
 
 .hero::before {
@@ -1423,6 +1441,12 @@ button {
     background: var(--secondary-color);
 }
 
+#back-to-top.is-visible {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
 #back-to-top:focus {
     outline: 3px solid var(--primary-color);
     outline-offset: 2px;
@@ -1447,37 +1471,6 @@ button {
     .nav-toggle {
         display: block;
     }
-}
-
-@keyframes typing {
-    from {
-        width: 0;
-    }
-
-    to {
-        width: 100%;
-    }
-}
-
-@keyframes blink-caret {
-
-    from,
-    to {
-        border-color: transparent;
-    }
-
-    50% {
-        border-color: var(--primary-color);
-    }
-}
-
-#typewriter {
-    overflow: hidden;
-    border-right: 2px solid var(--primary-color);
-    white-space: nowrap;
-    margin: 0 auto;
-    letter-spacing: 0.15em;
-    animation: typing 3.5s steps(40, end), blink-caret 0.75s step-end infinite;
 }
 
 /* Projects Section Styles */
@@ -1767,10 +1760,7 @@ button {
 /* Dark-mode hero harmonization */
 .dark-theme .hero {
     background-color: rgba(15, 23, 42, 0.65);
-    /* overlay with image */
     background-blend-mode: overlay;
-    background-attachment: scroll;
-    /* avoid harsh contrast and jank on mobile */
 }
 
 .dark-theme .hero::before {
@@ -2257,6 +2247,12 @@ button {
     outline: 3px solid rgba(255, 255, 255, 0.12);
 }
 
+.lightbox .lightbox-nav:disabled {
+    cursor: not-allowed;
+    opacity: 0.35;
+    transform: translateY(-50%) scale(0.95);
+}
+
 
 /* Sessions section */
 #sessions .sessions-content {
@@ -2500,11 +2496,6 @@ button {
         padding: 3rem 5%;
     }
 
-    .certificates-carousel-wrapper {
-        gap: 1.5rem;
-        margin: 2rem 0;
-    }
-
     .certificates-grid {
         grid-template-columns: repeat(2, 1fr);
         gap: 1.5rem;
@@ -2534,21 +2525,11 @@ button {
         font-size: 0.95rem;
     }
 
-    .carousel-btn {
-        width: 45px;
-        height: 45px;
-        font-size: 1.1rem;
-    }
 }
 
 @media (max-width: 480px) {
     #certificates {
         padding: 2rem 3%;
-    }
-
-    .certificates-carousel-wrapper {
-        gap: 1rem;
-        margin: 1.5rem 0;
     }
 
     .certificates-grid {
@@ -2585,21 +2566,6 @@ button {
 
     .cert-desc {
         font-size: 0.9rem;
-    }
-
-    .carousel-btn {
-        width: 40px;
-        height: 40px;
-        font-size: 1rem;
-    }
-
-    .carousel-indicators {
-        gap: 0.5rem;
-    }
-
-    .indicator {
-        width: 8px;
-        height: 8px;
     }
 
     .certificates-cta .cta {
@@ -2861,6 +2827,23 @@ button {
     border-color: var(--primary-color);
     color: var(--primary-color);
     box-shadow: 0 15px 35px rgba(106, 13, 173, 0.1);
+}
+
+.contact-btn.tertiary {
+    background: #111827;
+    color: white;
+    box-shadow: 0 10px 25px rgba(17, 24, 39, 0.18);
+}
+
+.contact-btn.tertiary:hover {
+    transform: translateY(-5px);
+    background: #000;
+    box-shadow: 0 15px 35px rgba(17, 24, 39, 0.28);
+}
+
+.dark-theme .contact-btn.tertiary {
+    background: rgba(255, 255, 255, 0.92);
+    color: #111827;
 }
 
 /* Input icons */

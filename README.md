@@ -1,72 +1,53 @@
-# Ahmed Yasser Taha's Portfolio
+# Ahmed Yasser Taha Portfolio
 
-A modern, responsive portfolio website showcasing my work as a Back-end Developer and Data Scientist.
+A responsive personal portfolio for Ahmed Yasser Taha, focused on software development, data science, AI, and computer science teaching.
 
 ## Features
 
-- 🎨 Modern and clean design
-- 📱 Fully responsive layout
-- 🌓 Dark/Light mode toggle
-- ⚡ Fast loading and optimized performance
-- ♿ Accessibility compliant
-- 🔍 SEO optimized
+- Responsive single-page layout
+- Dark and light theme toggle
+- Accessible skip link, focus styles, and keyboard-friendly gallery lightbox
+- Featured profile links, certifications, gallery, videos, teaching sessions, and contact actions
+- Performance-minded media loading for images and embedded videos
+- SEO and social sharing metadata
 
-## Technologies Used
+## Technologies
 
 - HTML5
-- CSS3 (with CSS Variables)
-- JavaScript (Vanilla)
-- Font Awesome Icons
-- Google Fonts
+- CSS3 with custom properties
+- Vanilla JavaScript
+- Font Awesome icons
 
 ## Getting Started
 
-1. Clone the repository:
+Open `index.html` directly in a browser, or serve the folder locally:
+
 ```bash
-git clone https://github.com/ahmedyasser7/ahmedyassertaha-portfolio.git
+python -m http.server 8000
 ```
 
-2. Open `index.html` in your browser or use a local server:
-```bash
-# Using Python
-python -m http.server 8000
+Then visit:
 
-# Using Node.js
-npx serve
+```text
+http://localhost:8000
 ```
 
 ## Project Structure
 
-```
+```text
 portfolio/
-├── index.html          # Main HTML file
-├── styles.css          # Styles
-├── scripts.js          # JavaScript functionality
-├── favicon_io/         # Favicon files
-├── robots.txt          # Search engine crawling rules
-├── sitemap.xml         # SEO sitemap
-└── README.md           # Project documentation
+├── index.html
+├── styles.css
+├── scripts.js
+├── images/
+├── favicon_io/
+├── robots.txt
+├── sitemap.xml
+└── README.md
 ```
-
-## Performance Optimization
-
-- Lazy loading for images
-- Minified CSS and JavaScript
-- Optimized images
-- Preloaded critical resources
-- Efficient caching
-
-## Browser Support
-
-- Chrome (latest)
-- Firefox (latest)
-- Safari (latest)
-- Edge (latest)
-- Opera (latest)
 
 ## Contact
 
-For any questions or suggestions, please reach out through:
 - Email: ahmedyasser7714@gmail.com
-- LinkedIn: [Ahmed Yasser Taha](https://www.linkedin.com/in/ahmedyassertaha/)
-- GitHub: [ahmedyasser7](https://github.com/ahmedyasser7/)
+- LinkedIn: https://www.linkedin.com/in/ahmedyassertaha/
+- GitHub: https://github.com/ahmedyasser7
